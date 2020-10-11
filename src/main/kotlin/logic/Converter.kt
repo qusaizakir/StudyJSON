@@ -7,6 +7,7 @@ import logic.Constants.objectSt
 import models.Question
 import models.Questionnaire
 import models.Study
+import tornadofx.runLater
 import tornadofx.warning
 import java.io.File
 
@@ -19,18 +20,21 @@ object Constants {
 }
 
 
-fun createObjectsFromJSON(json: String){
+fun createObjectsFromJSON(json: String): Boolean {
     var study: Study? = null
     try {
         study = Klaxon().parse<Study>(json)
     }catch (e: Exception){
-        warning("Not valid study JSON")
+        runLater {
+            warning("Not valid study JSON")
+        }
     }
 
     study?.apply {
         File("Questionnaires.kt").writeText(createQuestionnaireContent(this))
+        return true
     }
-
+    return false
 }
 
 fun createQuestionnaireContent(study: Study): String {

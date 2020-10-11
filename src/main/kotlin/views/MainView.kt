@@ -25,8 +25,8 @@ class MainView: View("ERT Study JSON") {
             action {
                 runAsyncWithProgress {
                     createObjectsFromJSON(jsonInput.get())
-                } ui {
-                    information("Successfully created Questionnaire.kt")
+                } ui {success ->
+                    if(success) information("Successfully created Questionnaire.kt")
                 }
 
             }
