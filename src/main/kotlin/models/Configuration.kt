@@ -1,9 +1,12 @@
 package models
 
+import com.beust.klaxon.Json
+
 data class Configuration(
     val Id: String = "",
     val GeneralSettings: GeneralSettings = GeneralSettings(),
     val MeasurementSettings: Any? = Any(),
     val DateTimeSettings: Any? = Any(),
-    val TriggeredMessages: List<Any> = listOf()
+    @Json(ignored = true)
+    val TriggeredMessages: List<Any> = emptyList()
 )

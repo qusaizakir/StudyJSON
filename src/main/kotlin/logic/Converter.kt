@@ -4,6 +4,7 @@ import com.beust.klaxon.Klaxon
 import logic.Constants.constVal
 import logic.Constants.globalId
 import logic.Constants.objectSt
+import models.FlowStep
 import models.Question
 import models.Questionnaire
 import models.Study
@@ -64,11 +65,15 @@ fun createQuestionnaireContent(study: Study): String {
 fun addQuestionsToString(questionnaire: Questionnaire, stringBuilder: StringBuilder) {
 
     questionnaire.Flows.forEach { flow ->
-        flow.FlowSteps.forEach { flowSteps ->
+        flow.FlowSteps.sortedBy {it.Order}.forEach {flowSteps ->
             val questions = flowSteps.Page.Questions
             val pageName = flowSteps.Page.Name
+            val pageNameID = flowSteps.Page.Name.toCamelCase()+"Page"
+            val pageID = flowSteps.Page.PageGlobalIdentifier
             stringBuilder.newLine()
             stringBuilder.append("""    //$pageName""")
+            stringBuilder.newLine()
+            stringBuilder.append("""    $constVal $pageNameID = "$pageID"""")
             questions.forEach {question ->
                 val questionName = (question.Name ?: "noEnglishName").toString().toCamelCase()
                 val questionGlobalId = question.QuestionGlobalIdentifier

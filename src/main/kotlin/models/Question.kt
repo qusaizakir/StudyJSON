@@ -1,5 +1,7 @@
 package models
 
+import com.beust.klaxon.Json
+
 data class Question(
     val DisplayParameters: String = "",
     val Id: String = "",
@@ -15,5 +17,6 @@ data class Question(
     val SqlDataType: Any? = Any(),
     val QuestionOptions: List<QuestionOption> = listOf(),
     val QuestionHint: List<Any> = listOf(),
+    @Json(ignored = true)
     val Configurations: List<Configuration> = listOf()
 )

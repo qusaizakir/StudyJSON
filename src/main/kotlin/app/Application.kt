@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
     launch<Application>(args)
 }
 
-class Application : App(MainView::class, Styles::class) {
+class Application : App(MainView::class, Styles::class)  {
 
     init {
         reloadStylesheetsOnFocus()
