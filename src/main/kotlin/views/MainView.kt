@@ -1,7 +1,8 @@
 package views
 
 import javafx.beans.property.SimpleStringProperty
-import logic.createObjectsFromJSON
+import logic.createEventsFromJSON
+import logic.createQuestionnairesFromJSON
 import tornadofx.*
 
 class MainView: View("ERT Study JSON") {
@@ -24,9 +25,21 @@ class MainView: View("ERT Study JSON") {
             addClass(Styles.createButton)
             action {
                 runAsyncWithProgress {
-                    createObjectsFromJSON(jsonInput.get())
+                    createQuestionnairesFromJSON(jsonInput.get())
                 } ui {success ->
                     if(success) information("Successfully created Questionnaire.kt")
+                }
+
+            }
+        }
+
+        button("Create Events.kt"){
+            addClass(Styles.createButton)
+            action {
+                runAsyncWithProgress {
+                    createEventsFromJSON(jsonInput.get())
+                } ui {success ->
+                    if(success) information("Successfully created Events.kt")
                 }
 
             }

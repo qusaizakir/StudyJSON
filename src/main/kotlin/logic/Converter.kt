@@ -8,6 +8,7 @@ import models.FlowStep
 import models.Question
 import models.Questionnaire
 import models.Study
+import models.events.Events
 import tornadofx.runLater
 import tornadofx.warning
 import java.io.File
@@ -18,10 +19,11 @@ object Constants {
     const val objectSt = "object"
     const val constVal = "const val"
     const val globalId = "globalId"
+    const val events = "Events"
 }
 
 
-fun createObjectsFromJSON(json: String): Boolean {
+fun createQuestionnairesFromJSON(json: String): Boolean {
     var study: Study? = null
     try {
         study = Klaxon().parse<Study>(json)
@@ -36,6 +38,50 @@ fun createObjectsFromJSON(json: String): Boolean {
         return true
     }
     return false
+}
+
+fun createEventsFromJSON(json: String): Boolean {
+    var events: Events? = null
+    try {
+        events = Klaxon().parse<Events>(json)
+    }catch (e: Exception){
+        runLater {
+            warning("Not valid event JSON")
+        }
+    }
+
+    events?.apply {
+        File("Events.kt").writeText(createEventsContent(this))
+        return true
+    }
+    return false
+}
+
+fun createEventsContent(events: Events): String {
+
+    val stringBuilder = StringBuilder()
+
+    val start = """$objectSt ${Constants.events} {"""
+
+    stringBuilder.append(start)
+    stringBuilder.newLine()
+
+    events.Events.forEach {event ->
+
+        val name = event.Name.toCamelCase()
+        val globalID = event.EventGlobalIdentifier
+
+        val string =
+        """     $constVal $name = "$globalID"
+        """.trimMargin()
+
+        stringBuilder.append(string)
+        stringBuilder.newLine()
+    }
+
+    stringBuilder.append("}")
+    return stringBuilder.toString()
+
 }
 
 fun createQuestionnaireContent(study: Study): String {
@@ -75,14 +121,17 @@ fun addQuestionsToString(questionnaire: Questionnaire, stringBuilder: StringBuil
             stringBuilder.newLine()
             stringBuilder.append("""    $constVal $pageNameID = "$pageID"""")
             questions.forEach {question ->
-                val questionName = (question.Name ?: "noEnglishName").toString().toCamelCase()
-                val questionGlobalId = question.QuestionGlobalIdentifier
+                if(question.Name != null){
+                    val questionName = (question.Name).toString().toCamelCase()
+                    val questionGlobalId = question.QuestionGlobalIdentifier
 
-                stringBuilder.newLine()
-                val questionString =
-                    """    $constVal $questionName = "$questionGlobalId""""
+                    stringBuilder.newLine()
+                    val questionString =
+                            """    $constVal $questionName = "$questionGlobalId""""
 
-                stringBuilder.append(questionString)
+                    stringBuilder.append(questionString)
+                }
+
             }
         }
     }
